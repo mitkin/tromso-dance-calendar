@@ -124,7 +124,7 @@ if(safeUrl(D.contact||'')||/^mailto:/.test(D.contact||'')){$('contact').href=D.c
 
 const coffeeUrl=safeUrl(D.coffee||'');
 if(coffeeUrl){$('coffee').href=coffeeUrl;$('coffee').hidden=false;$('coffeeNote').hidden=false}
-({id:o.club+'|'+o.title+'|'+k,club:o.club,t:o.title,d:k,s:o.start,e:o.end,v:o.venue,x:o.desc,u:o.url});
+const mk=(o,k)=>({id:o.club+'|'+o.title+'|'+k,club:o.club,t:o.title,d:k,s:o.start,e:o.end,v:o.venue,x:o.desc,u:o.url});
 function eventsOn(k){
   const d=new Date(k+'T00:00'),out=[];
   (D.weekly||[]).forEach(w=>{
