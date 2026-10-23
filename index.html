@@ -96,6 +96,25 @@ let S={off:[],going:[]};
 try{const r=localStorage.getItem('tromso-dance');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const save=()=>{try{localStorage.setItem('tromso-dance',JSON.stringify(S))}catch(e){}};
 
+const SB=D.supabase&&safeUrl(D.supabase.url||'')&&D.supabase.anonKey?{url:safeUrl(D.supabase.url).replace(/\/$/,''),key:D.supabase.anonKey}:null;
+let COUNTS={};
+let CID='';
+try{CID=localStorage.getItem('tromso-dance-cid')||'';if(!CID){CID=crypto.randomUUID();localStorage.setItem('tromso-dance-cid',CID)}}catch(e){}
+const sbFetch=(path,opt)=>fetch(SB.url+'/rest/v1/'+path,Object.assign({headers:{apikey:SB.key,Authorization:'Bearer '+SB.key,'Content-Type':'application/json'}},opt));
+async function loadCounts(){
+  if(!SB)return;
+  try{const r=await sbFetch('going_counts?select=event_id,n');if(!r.ok)return;
+    COUNTS={};(await r.json()).forEach(x=>COUNTS[x.event_id]=x.n);renderCal();renderAgenda()}catch(e){}
+}
+let queue=Promise.resolve();
+function pushGoing(id,going){
+  if(!SB||!CID)return;
+  queue=queue.then(async()=>{
+    try{await sbFetch('rpc/set_going',{method:'POST',body:JSON.stringify({p_event:id,p_client:CID,p_going:going})})}catch(e){}
+    await loadCounts();
+  });
+}
+
 document.title=D.title||document.title;$('h1').textContent=D.title||'';
 if(safeUrl(D.contact||'')||/^mailto:/.test(D.contact||'')){$('contact').href=D.contact;$('contact').textContent='Send a correction';$('contact').hidden=false}
 
@@ -156,13 +175,14 @@ function renderAgenda(){
     el.innerHTML='<div class="info"><b></b><div class="meta"></div></div>';
     const info=el.querySelector('.info');
     el.querySelector('b').textContent=e.t+' · '+c.name;
-    el.querySelector('.meta').textContent=e.s+'–'+e.e+(e.v?' · '+e.v:'');
+    const n=COUNTS[e.id]||0;
+    el.querySelector('.meta').textContent=e.s+'–'+e.e+(e.v?' · '+e.v:'')+(SB?' · '+n+' going':'');
     const ds=e.x||c.desc||'',us=safeUrl(e.u||c.url||'');
     if(ds){const p=document.createElement('p');p.className='desc';p.textContent=ds;info.appendChild(p)}
     if(us){const a=document.createElement('a');a.href=us;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Event page';info.appendChild(a)}
     if(cl.length){const w=document.createElement('div');w.className='warn';w.textContent='Clashes with '+cl.map(o=>o.t+' ('+club(o.club).name+')').join(', ');info.appendChild(w)}
     const bt=document.createElement('button');bt.className='btn go';bt.setAttribute('aria-pressed',g);bt.textContent=g?'Going ✓':'Mark as going';
-    bt.onclick=()=>{S.going=g?S.going.filter(x=>x!==e.id):S.going.concat(e.id);save();render()};
+    bt.onclick=()=>{S.going=g?S.going.filter(x=>x!==e.id):S.going.concat(e.id);save();render();pushGoing(e.id,!g)};
     el.appendChild(bt);A.appendChild(el);
   });
 }
@@ -173,6 +193,7 @@ $('prev').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);ren
 $('next').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);renderCal()};
 $('today').onclick=()=>{view=new Date(TODAY.getFullYear(),TODAY.getMonth(),1);sel=key(TODAY);render()};
 render();
+loadCounts();
 </script>
 </body>
 </html>

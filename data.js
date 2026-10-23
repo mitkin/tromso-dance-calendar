@@ -7,6 +7,10 @@ window.CALENDAR = {
   title: 'Tromsø social dance calendar',
   contact: '',   // optional, e.g. 'mailto:you@example.com'. Shows a "Send a correction" link.
 
+  // Optional: shows "N going" per social. See README ("Show how many are going").
+  // The anon key is public by design; leave both empty to hide counts.
+  supabase: { url: 'https://omchirosvaavxmdmxear.supabase.co', anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tY2hpcm9zdmFhdnhtZG14ZWFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3NjQ0NTMsImV4cCI6MjEwODM0MDQ1M30.r5jfDYLjt4TyEemL7SnqUFJlQsS-k8eA-3uAd1N6nC0' },
+
   // One entry per club. "id" is a short code you reuse below.
   clubs: [
     { id: 'arctic-westies', name: 'Arctic Westies', color: '#87cefa' },
