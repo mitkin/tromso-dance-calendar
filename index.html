@@ -51,7 +51,6 @@ h1{font-size:26px;margin-bottom:6px}
 .warn{display:inline-block;margin-top:4px;background:var(--bad-bg);color:var(--bad);border-radius:6px;padding:2px 8px;font-size:13px;font-weight:700}
 .go[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
 .empty{color:var(--muted)}
-.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:10px;font-weight:700;display:none}
 </style>
 </head>
 <body>
@@ -61,7 +60,6 @@ h1{font-size:26px;margin-bottom:6px}
     <p class="sub">Every club’s socials in one place. Mark what you’re going to and clashes are flagged.</p>
     <div id="clubs"></div>
     <div class="stack">
-      <button class="btn primary" id="copy">Copy my plan</button>
       <a id="contact" hidden>Send a correction</a>
     </div>
   </aside>
@@ -80,7 +78,6 @@ h1{font-size:26px;margin-bottom:6px}
     </section>
   </main>
 </div>
-<div class="toast" id="toast" role="status"></div>
 <script src="data.js"></script>
 <script>
 const D=window.CALENDAR||{title:'Calendar',clubs:[],weekly:[],events:[]};
@@ -118,8 +115,6 @@ function clashes(e){
   const[s1,e1]=span(e);
   return byDay(e.d).filter(o=>o.id!==e.id&&S.going.includes(o.id)&&(()=>{const[s2,e2]=span(o);return s1<e2&&s2<e1})());
 }
-function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',1800)}
-
 function renderClubs(){
   const box=$('clubs');box.innerHTML='';
   CLUBS.forEach(c=>{
@@ -177,13 +172,6 @@ $('dows').innerHTML=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(x=>'<div cla
 $('prev').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);renderCal()};
 $('next').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);renderCal()};
 $('today').onclick=()=>{view=new Date(TODAY.getFullYear(),TODAY.getMonth(),1);sel=key(TODAY);render()};
-$('copy').onclick=async()=>{
-  const list=[];
-  for(let i=0;i<120;i++){const d=new Date(TODAY);d.setDate(d.getDate()+i);byDay(key(d)).forEach(e=>{if(S.going.includes(e.id))list.push(e)})}
-  if(!list.length){toast('Mark some socials as going first');return}
-  const txt=list.map(e=>e.d+' '+e.s+'–'+e.e+'  '+e.t+' ('+club(e.club).name+')'+(e.v?' @ '+e.v:'')).join('\n');
-  try{await navigator.clipboard.writeText(txt);toast('Plan copied')}catch(err){prompt('Copy your plan:',txt)}
-};
 render();
 </script>
 </body>
