@@ -6,6 +6,7 @@
 window.CALENDAR = {
   title: 'Tromsø social dance calendar',
   contact: '',   // optional, e.g. 'mailto:you@example.com'. Shows a "Send a correction" link.
+  coffee: 'https://buymeacoffee.com/mikitk',   // optional. Shows a "Buy me a coffee" link; leave empty to hide.
 
   // Optional: shows "N going" per social. See README ("Show how many are going").
   // The anon key is public by design; leave both empty to hide counts.

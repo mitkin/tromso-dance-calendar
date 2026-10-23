@@ -27,6 +27,8 @@ h1{font-size:26px;margin-bottom:6px}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .stack{display:grid;gap:8px;margin-top:12px}
 .stack a{color:var(--accent);font-weight:700}
+.stack a.coffee{text-align:center;text-decoration:none;background:#ffdd00;border-color:#ffdd00;color:#11263a}
+.muted{color:var(--muted);font-size:13px}
 .bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .bar h2{font-size:24px;flex:1;min-width:150px}
 .grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
@@ -61,6 +63,8 @@ h1{font-size:26px;margin-bottom:6px}
     <div id="clubs"></div>
     <div class="stack">
       <a id="contact" hidden>Send a correction</a>
+      <a id="coffee" class="btn coffee" hidden target="_blank" rel="noopener noreferrer">☕ Buy me a coffee</a>
+      <small class="muted" id="coffeeNote" hidden>Helps cover the domain and the time spent keeping this up to date.</small>
     </div>
   </aside>
   <main class="panel">
@@ -118,7 +122,9 @@ function pushGoing(id,going){
 document.title=D.title||document.title;$('h1').textContent=D.title||'';
 if(safeUrl(D.contact||'')||/^mailto:/.test(D.contact||'')){$('contact').href=D.contact;$('contact').textContent='Send a correction';$('contact').hidden=false}
 
-const mk=(o,k)=>({id:o.club+'|'+o.title+'|'+k,club:o.club,t:o.title,d:k,s:o.start,e:o.end,v:o.venue,x:o.desc,u:o.url});
+const coffeeUrl=safeUrl(D.coffee||'');
+if(coffeeUrl){$('coffee').href=coffeeUrl;$('coffee').hidden=false;$('coffeeNote').hidden=false}
+({id:o.club+'|'+o.title+'|'+k,club:o.club,t:o.title,d:k,s:o.start,e:o.end,v:o.venue,x:o.desc,u:o.url});
 function eventsOn(k){
   const d=new Date(k+'T00:00'),out=[];
   (D.weekly||[]).forEach(w=>{
