@@ -238,7 +238,7 @@ function renderAgenda(){
     el.querySelector('.meta').textContent=(e.multi?fmtRange(e)+' · day '+(Math.round((new Date(e.d)-new Date(e.first))/864e5)+1)+' of '+(Math.round((new Date(e.last)-new Date(e.first))/864e5)+1):e.nt?'':e.s+'–'+e.e)+(e.v&&(e.multi||!e.nt)?' · ':'')+(e.v||'')+(SB?' · '+n+' going':'');
     if(e.type!=='Social'){const bd=document.createElement('span');bd.className='badge';bd.textContent=e.type;el.querySelector('b').after(bd)}
     e.dances.slice().reverse().forEach(x=>{const bd=document.createElement('span');bd.className='badge dance';bd.textContent=x;el.querySelector('b').after(bd)});
-    const ds=e.x||c.desc||'',us=safeUrl(e.u||c.url||'');
+    const ds=e.x||c.desc||'',us=safeUrl(e.u===undefined?c.url||'':e.u);
     if(ds){const p=document.createElement('p');p.className='desc';p.textContent=ds;info.appendChild(p)}
     if(us){const a=document.createElement('a');a.href=us;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Event page';info.appendChild(a)}
     if(cl.length){const w=document.createElement('div');w.className='warn';w.textContent='Clashes with '+cl.map(o=>o.t+' ('+club(o.club).name+')').join(', ');info.appendChild(w)}
