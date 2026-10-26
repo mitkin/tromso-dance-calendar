@@ -17,14 +17,15 @@ window.CALENDAR = {
     { id: 'arctic-westies', name: 'Arctic Westies', color: '#87cefa', url: 'https://arcticwesties.no/' },
     { id: 'tromso-salsaklubb', name: 'Tromsø Salsaklubb', color: '#e4572e', url: 'https://tromsosalsaklubb.com/timeplan-var-2025/' },
     { id: 'winterworld-westies', name: 'WinterWorld Westies', color: '#7b5ea7', url: 'https://winterworldwesties.com/schedule/' },
-    { id: 'mambo-bachata', name: 'Mambo Bachata Trondheim', color: '#1f9d6b', url: 'https://www.mambobachatatrondheim.no/' }
+    { id: 'mambo-bachata', name: 'Mambo Bachata Trondheim', color: '#1f9d6b', url: 'https://www.mambobachatatrondheim.no/' },
+    { id: 'tango-polar', name: 'Tango Polar', color: '#c2185b' }
   ],
 
   // Repeating socials. weekday: 0=Sunday, 1=Monday ... 6=Saturday.
   // every: 1 = weekly, 2 = every second week (counted from "from", which should fall on that weekday).
   // from / until are optional (YYYY-MM-DD). Recurring socials are set to end 2026-12-31 (one semester); extend `until` when the next semester is confirmed.
   weekly: [
-    { club: 'arctic-westies', title: 'Monday social', dances: ['WCS'], weekday: 1, start: '21:00', end: '23:00', venue: 'LHL', until: '2026-12-31' },
+    { club: 'tango-polar', title: 'Tango', dances: ['Tango'], weekday: 1, start: '20:00', end: '22:00', venue: 'Habibi dansestudio, Søndre Tollbodgate 7, 9008 Tromsø', until: '2026-12-14', url: 'https://fb.me/e/aIA06vuqz' },    { club: 'arctic-westies', title: 'Monday social', dances: ['WCS'], weekday: 1, start: '21:00', end: '23:00', venue: 'LHL', until: '2026-12-31' },
     { club: 'winterworld-westies', title: 'Wednesday social', dances: ['WCS'], weekday: 3, start: '19:00', end: '20:15', venue: 'Hagen Tromsø, Storgata 132', until: '2026-12-31', url: 'https://winterworldwesties.com/schedule/' }
   ],
 

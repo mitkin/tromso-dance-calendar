@@ -44,7 +44,6 @@ h1{font-size:26px;margin-bottom:6px}
 .cell.today .n{background:var(--accent);color:var(--on-accent);border-radius:999px;display:inline-block;width:24px;text-align:center;padding:0}
 .chip{font-size:11px;line-height:1.2;padding:2px 4px;border-radius:5px;border:1.5px solid var(--c);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chip.going{background:var(--c);color:#fff;font-weight:700}
-.chip.clash{border-style:dashed}
 .more{font-size:11px;color:var(--muted);padding-left:3px}
 @media(max-width:640px){.cell{min-height:58px}.chip{font-size:0;height:8px;padding:0;border-radius:4px}}
 .agenda h3{font-size:20px;margin-bottom:10px}
@@ -54,7 +53,6 @@ h1{font-size:26px;margin-bottom:6px}
 .meta{color:var(--muted)}
 .desc{margin:6px 0 0}
 .ev a{color:var(--accent);font-weight:700}
-.warn{display:inline-block;margin-top:4px;background:var(--bad-bg);color:var(--bad);border-radius:6px;padding:2px 8px;font-size:13px;font-weight:700}
 .go[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
 .empty{color:var(--muted)}
 .orgs{margin-top:14px}.orgs .muted{margin-bottom:6px}
@@ -120,7 +118,6 @@ const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
 const key=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const mins=t=>{const[a,b]=t.split(':').map(Number);return a*60+b};
-const span=e=>{const s=mins(e.s);let en=mins(e.e);if(en<=s)en+=1440;return[s,en]};
 const safeUrl=u=>{try{const x=new URL(u);return /^https?:$/.test(x.protocol)?x.href:''}catch(e){return ''}};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const club=id=>CLUBS.find(c=>c.id===id)||{id,name:id,color:'#888'};
@@ -173,10 +170,6 @@ const TYPES=(D.types||['Social','Event']).concat([...new Set([...(D.weekly||[]),
 const DANCES=(D.dances||['Bachata','Salsa','Zouk','Kizomba','WCS']).concat([...new Set([...(D.weekly||[]),...(D.events||[])].flatMap(o=>o.dances||[]))]).filter((t,i,a)=>a.indexOf(t)===i);
 const danceOk=e=>!S.onDances.length||e.dances.some(x=>S.onDances.includes(x));
 const byDay=k=>eventsOn(k).filter(e=>(!S.on.length||S.on.includes(e.club))&&(!S.onTypes.length||S.onTypes.includes(e.type))&&danceOk(e)).sort((a,b)=>mins(a.s)-mins(b.s));
-function clashes(e){
-  const[s1,e1]=span(e);
-  return byDay(e.d).filter(o=>o.id!==e.id&&S.going.includes(o.id)&&(()=>{const[s2,e2]=span(o);return s1<e2&&s2<e1})());
-}
 function renderTypes(){
   const box=$('types');box.innerHTML='';
   const rb=$('reset');rb.hidden=!(S.on.length||S.onTypes.length||S.onDances.length);
@@ -218,8 +211,8 @@ function renderCal(){
     b.className='cell'+(d.getMonth()!==view.getMonth()?' out':'')+(k===sel?' sel':'')+(k===key(TODAY)?' today':'');
     b.setAttribute('aria-label',d.toDateString()+', '+evs.length+' socials');
     let h='<span class="n">'+d.getDate()+'</span>';
-    evs.slice(0,3).forEach(e=>{const gg=S.going.includes(e.id),cl=!gg&&clashes(e).length;
-      h+='<span class="chip'+(gg?' going':'')+(cl?' clash':'')+'" style="--c:'+club(e.club).color+'">'+esc((e.nt?'':e.s+' ')+e.t)+'</span>'});
+    evs.slice(0,3).forEach(e=>{const gg=S.going.includes(e.id);
+      h+='<span class="chip'+(gg?' going':'')+'" style="--c:'+club(e.club).color+'">'+esc((e.nt?'':e.s+' ')+e.t)+'</span>'});
     if(evs.length>3)h+='<span class="more">+'+(evs.length-3)+' more</span>';
     b.innerHTML=h;b.onclick=()=>{sel=k;render()};g.appendChild(b);
   }
@@ -229,7 +222,7 @@ function renderAgenda(){
   const A=$('agenda'),evs=byDay(sel);A.innerHTML='';
   if(!evs.length){A.innerHTML='<p class="empty">No socials this day. Pick another day, or turn on more organizers.</p>';return}
   evs.forEach(e=>{
-    const c=club(e.club),g=S.going.includes(e.id),cl=clashes(e);
+    const c=club(e.club),g=S.going.includes(e.id);
     const el=document.createElement('div');el.className='ev';el.style.setProperty('--c',c.color);
     el.innerHTML='<div class="info"><b></b><div class="meta"></div></div>';
     const info=el.querySelector('.info');
@@ -241,7 +234,6 @@ function renderAgenda(){
     const ds=e.x||c.desc||'',us=safeUrl(e.u===undefined?c.url||'':e.u);
     if(ds){const p=document.createElement('p');p.className='desc';p.textContent=ds;info.appendChild(p)}
     if(us){const a=document.createElement('a');a.href=us;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Event page';info.appendChild(a)}
-    if(cl.length){const w=document.createElement('div');w.className='warn';w.textContent='Clashes with '+cl.map(o=>o.t+' ('+club(o.club).name+')').join(', ');info.appendChild(w)}
     const bt=document.createElement('button');bt.className='btn go';bt.setAttribute('aria-pressed',g);bt.textContent=g?'Going ✓':'Mark as going';
     bt.onclick=()=>{S.going=g?S.going.filter(x=>x!==e.id):S.going.concat(e.id);save();render();pushGoing(e.id,!g)};
     el.appendChild(bt);A.appendChild(el);
