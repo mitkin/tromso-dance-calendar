@@ -17,11 +17,12 @@ button{font:inherit;color:inherit;cursor:pointer}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
 h1{font-size:26px;margin-bottom:6px}
 .sub{color:var(--muted);margin:0 0 16px}
-.row1{display:flex;gap:6px;margin-bottom:6px;position:relative}
-.row1:has(.site) .club{padding-right:34px}
-.club{flex:1;display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:transparent;text-align:left}
-.club .sw{width:14px;height:14px;border-radius:50%;background:var(--c);flex:none}
-.club[aria-pressed="true"]{border:2px solid var(--c);padding:7px 9px;background:color-mix(in srgb,var(--c) 22%,transparent)}
+.row1{display:flex;gap:6px;margin-bottom:4px;position:relative}
+.row1:has(.site) .club{padding-right:28px}
+.club{flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:4px 8px;font-size:13px;border:1px solid var(--line);border-radius:8px;background:transparent;text-align:left}
+.club b{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.club .sw{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+.club[aria-pressed="true"]{border:2px solid var(--c);padding:3px 7px;background:color-mix(in srgb,var(--c) 22%,transparent)}
 .club[aria-pressed="true"] .sw{box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 40%,transparent)}
 .site{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--muted);opacity:.55;text-decoration:none;font-size:13px}
 .site:hover,.site:focus-visible{color:var(--accent);opacity:1}
@@ -56,7 +57,7 @@ h1{font-size:26px;margin-bottom:6px}
 .warn{display:inline-block;margin-top:4px;background:var(--bad-bg);color:var(--bad);border-radius:6px;padding:2px 8px;font-size:13px;font-weight:700}
 .go[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
 .empty{color:var(--muted)}
-.orgs .muted{margin-bottom:6px}
+.orgs{margin-top:14px}.orgs .muted{margin-bottom:6px}
 .reset{margin-top:10px;padding:0;border:0;background:none;color:var(--muted);font:inherit;font-size:12px;text-decoration:underline;opacity:.8;cursor:pointer}
 .reset:hover,.reset:focus-visible{color:var(--accent);opacity:1}
 .types{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center}
@@ -77,12 +78,12 @@ h1{font-size:26px;margin-bottom:6px}
 <div class="app">
   <aside class="panel">
     <h1 id="h1">Tromsø social dance calendar</h1>
-    <p class="sub">Every organizer’s socials in one place. Mark what you’re going to.</p>
+    <p class="sub">All socials in one place. Mark what you’re going to.</p>
+    <div id="types" class="types"></div>
     <div class="orgs">
       <div class="muted">Organizer</div>
       <div id="clubs"></div>
     </div>
-    <div id="types" class="types"></div>
     <button id="reset" class="reset" hidden>Reset all filters</button>
     <div class="stack">
       <a id="contact" hidden>Send a correction</a>
