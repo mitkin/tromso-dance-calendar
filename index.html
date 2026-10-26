@@ -21,8 +21,8 @@ h1{font-size:26px;margin-bottom:6px}
 .row1:has(.site) .club{padding-right:34px}
 .club{flex:1;display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:transparent;text-align:left}
 .club .sw{width:14px;height:14px;border-radius:50%;background:var(--c);flex:none}
-.club[aria-pressed="false"]{opacity:.5}
-.club[aria-pressed="false"] .sw{background:transparent;border:2px solid var(--c)}
+.club[aria-pressed="true"]{border:2px solid var(--c);padding:7px 9px;background:color-mix(in srgb,var(--c) 22%,transparent)}
+.club[aria-pressed="true"] .sw{box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 40%,transparent)}
 .site{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--muted);opacity:.55;text-decoration:none;font-size:13px}
 .site:hover,.site:focus-visible{color:var(--accent);opacity:1}
 .foot{display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 0 12px;text-align:center}
@@ -57,6 +57,8 @@ h1{font-size:26px;margin-bottom:6px}
 .go[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
 .empty{color:var(--muted)}
 .orgs .muted{margin-bottom:6px}
+.reset{margin-top:10px;padding:0;border:0;background:none;color:var(--muted);font:inherit;font-size:12px;text-decoration:underline;opacity:.8;cursor:pointer}
+.reset:hover,.reset:focus-visible{color:var(--accent);opacity:1}
 .types{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center}
 .types .muted{width:100%}
 .tag{border:1px solid var(--line);background:transparent;border-radius:999px;padding:4px 12px;font-weight:700;font-size:13px}
@@ -81,6 +83,7 @@ h1{font-size:26px;margin-bottom:6px}
       <div id="clubs"></div>
     </div>
     <div id="types" class="types"></div>
+    <button id="reset" class="reset" hidden>Reset all filters</button>
     <div class="stack">
       <a id="contact" hidden>Send a correction</a>
     </div>
@@ -122,7 +125,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const club=id=>CLUBS.find(c=>c.id===id)||{id,name:id,color:'#888'};
 const TODAY=new Date();TODAY.setHours(0,0,0,0);
 let view=new Date(TODAY.getFullYear(),TODAY.getMonth(),1),sel=key(TODAY);
-let S={off:[],going:[],offTypes:[],offDances:[]};
+let S={on:[],going:[],onTypes:[],onDances:[]};
 try{const r=localStorage.getItem('tromso-dance');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const save=()=>{try{localStorage.setItem('tromso-dance',JSON.stringify(S))}catch(e){}};
 
@@ -167,21 +170,23 @@ function eventsOn(k){
 }
 const TYPES=(D.types||['Social','Event']).concat([...new Set([...(D.weekly||[]),...(D.events||[])].map(o=>o.type||'Social'))]).filter((t,i,a)=>a.indexOf(t)===i);
 const DANCES=(D.dances||['Bachata','Salsa','Zouk','Kizomba','WCS']).concat([...new Set([...(D.weekly||[]),...(D.events||[])].flatMap(o=>o.dances||[]))]).filter((t,i,a)=>a.indexOf(t)===i);
-const danceOk=e=>!e.dances.length||e.dances.some(x=>!S.offDances.includes(x));
-const byDay=k=>eventsOn(k).filter(e=>!S.off.includes(e.club)&&!S.offTypes.includes(e.type)&&danceOk(e)).sort((a,b)=>mins(a.s)-mins(b.s));
+const danceOk=e=>!S.onDances.length||e.dances.some(x=>S.onDances.includes(x));
+const byDay=k=>eventsOn(k).filter(e=>(!S.on.length||S.on.includes(e.club))&&(!S.onTypes.length||S.onTypes.includes(e.type))&&danceOk(e)).sort((a,b)=>mins(a.s)-mins(b.s));
 function clashes(e){
   const[s1,e1]=span(e);
   return byDay(e.d).filter(o=>o.id!==e.id&&S.going.includes(o.id)&&(()=>{const[s2,e2]=span(o);return s1<e2&&s2<e1})());
 }
 function renderTypes(){
   const box=$('types');box.innerHTML='';
-  const groups=[['Type',TYPES,'offTypes'],['Dance',DANCES,'offDances']];
+  const rb=$('reset');rb.hidden=!(S.on.length||S.onTypes.length||S.onDances.length);
+  rb.onclick=()=>{S.on=[];S.onTypes=[];S.onDances=[];save();render()};
+  const groups=[['Type',TYPES,'onTypes'],['Dance',DANCES,'onDances']];
   groups.forEach(([label,list,k])=>{
     if(list.length<2)return;
     const h=document.createElement('div');h.className='muted';h.textContent=label;box.appendChild(h);
     list.forEach(t=>{
       const b=document.createElement('button');b.className='tag';
-      b.setAttribute('aria-pressed',!S[k].includes(t));b.textContent=t;
+      b.setAttribute('aria-pressed',S[k].includes(t));b.textContent=t;
       b.onclick=()=>{S[k]=S[k].includes(t)?S[k].filter(x=>x!==t):S[k].concat(t);save();render()};
       box.appendChild(b);
     });
@@ -192,9 +197,9 @@ function renderClubs(){
   CLUBS.forEach(c=>{
     const row=document.createElement('div');row.className='row1';
     const b=document.createElement('button');b.className='club';b.style.setProperty('--c',c.color);
-    b.setAttribute('aria-pressed',!S.off.includes(c.id));
+    b.setAttribute('aria-pressed',S.on.includes(c.id));
     b.innerHTML='<span class="sw"></span><b>'+esc(c.name)+'</b>';
-    b.onclick=()=>{S.off=S.off.includes(c.id)?S.off.filter(x=>x!==c.id):S.off.concat(c.id);save();render()};
+    b.onclick=()=>{S.on=S.on.includes(c.id)?S.on.filter(x=>x!==c.id):S.on.concat(c.id);save();render()};
     row.appendChild(b);
     const u=safeUrl(c.url||'');
     if(u){const a=document.createElement('a');a.className='site';a.href=u;a.target='_blank';a.rel='noopener noreferrer';a.textContent='↗';a.title='Website';a.setAttribute('aria-label',c.name+' website');row.appendChild(a)}
