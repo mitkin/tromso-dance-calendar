@@ -1,7 +1,7 @@
 # Tromsø social dance calendar
 
-A static, read-only calendar that combines the socials of several dance clubs.
-Visitors can hide clubs, mark socials as "going" and see clashes.
+A static, read-only calendar that combines the socials of several dance organizers.
+Visitors can hide organizers and mark socials as "going".
 They cannot add or change entries. **Only people who can push to this repository can.**
 
 ## Add or change entries

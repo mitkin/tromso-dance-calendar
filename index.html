@@ -17,19 +17,20 @@ button{font:inherit;color:inherit;cursor:pointer}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
 h1{font-size:26px;margin-bottom:6px}
 .sub{color:var(--muted);margin:0 0 16px}
-aside.panel{display:flex;flex-direction:column}
-.stack.bottom{margin-top:auto;padding-top:16px}
-.row1{display:flex;gap:6px;margin-bottom:6px}
+.row1{display:flex;gap:6px;margin-bottom:6px;position:relative}
+.row1:has(.site) .club{padding-right:34px}
 .club{flex:1;display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:transparent;text-align:left}
 .club .sw{width:14px;height:14px;border-radius:50%;background:var(--c);flex:none}
 .club[aria-pressed="false"]{opacity:.5}
 .club[aria-pressed="false"] .sw{background:transparent;border:2px solid var(--c)}
-.site{display:flex;align-items:center;padding:0 8px;border:1px solid var(--line);border-radius:10px;color:var(--accent);font-weight:700;text-decoration:none;font-size:13px}
+.site{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--muted);opacity:.55;text-decoration:none;font-size:13px}
+.site:hover,.site:focus-visible{color:var(--accent);opacity:1}
+.foot{display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 0 12px;text-align:center}
+.foot a.coffee{text-decoration:none;background:#ffdd00;border-color:#ffdd00;color:#11263a}
 .btn{border:1px solid var(--line);background:transparent;border-radius:10px;padding:8px 12px;font-weight:700}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .stack{display:grid;gap:8px;margin-top:12px}
 .stack a{color:var(--accent);font-weight:700}
-.stack a.coffee{text-align:center;text-decoration:none;background:#ffdd00;border-color:#ffdd00;color:#11263a}
 .muted{color:var(--muted);font-size:13px}
 .bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .bar h2{font-size:24px;flex:1;min-width:150px}
@@ -55,20 +56,33 @@ aside.panel{display:flex;flex-direction:column}
 .warn{display:inline-block;margin-top:4px;background:var(--bad-bg);color:var(--bad);border-radius:6px;padding:2px 8px;font-size:13px;font-weight:700}
 .go[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
 .empty{color:var(--muted)}
+.orgs .muted{margin-bottom:6px}
+.types{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center}
+.types .muted{width:100%}
+.tag{border:1px solid var(--line);background:transparent;border-radius:999px;padding:4px 12px;font-weight:700;font-size:13px}
+.tag[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.badge{display:inline-block;margin-left:6px;padding:0 8px;border-radius:999px;border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--muted)}
+.badge.dance{border-color:var(--accent);color:var(--accent)}
+.upcoming h3{font-size:20px;margin-bottom:10px}
+.up{display:grid;grid-template-columns:200px 1fr auto;gap:4px 12px;align-items:center;width:100%;text-align:left;border:0;border-left:6px solid var(--c);background:var(--bg);border-radius:10px;padding:8px 12px;margin-bottom:6px}
+.up .when{font-weight:700}
+.up .what b{font-size:15px}
+.up .going-tag{font-size:12px;font-weight:700;color:var(--accent)}
+@media(max-width:640px){.up{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="app">
   <aside class="panel">
     <h1 id="h1">Tromsø social dance calendar</h1>
-    <p class="sub">Every club’s socials in one place. Mark what you’re going to and clashes are flagged.</p>
-    <div id="clubs"></div>
+    <p class="sub">Every organizer’s socials in one place. Mark what you’re going to.</p>
+    <div class="orgs">
+      <div class="muted">Organizer</div>
+      <div id="clubs"></div>
+    </div>
+    <div id="types" class="types"></div>
     <div class="stack">
       <a id="contact" hidden>Send a correction</a>
-    </div>
-    <div class="stack bottom">
-      <a id="coffee" class="btn coffee" hidden target="_blank" rel="noopener noreferrer">☕ Buy me a coffee</a>
-      <small class="muted" id="coffeeNote" hidden>Helps cover the domain and the time spent keeping this up to date.</small>
     </div>
   </aside>
   <main class="panel">
@@ -85,6 +99,14 @@ aside.panel{display:flex;flex-direction:column}
       <div id="agenda"></div>
     </section>
   </main>
+  <section class="panel upcoming" style="grid-column:1/-1">
+    <h3>All upcoming socials</h3>
+    <div id="upcoming"></div>
+  </section>
+  <footer class="foot" style="grid-column:1/-1">
+    <a id="coffee" class="btn coffee" hidden target="_blank" rel="noopener noreferrer">☕ Buy me a coffee</a>
+    <small class="muted" id="coffeeNote" hidden>Helps cover the domain and the time spent keeping this up to date.</small>
+  </footer>
 </div>
 <script src="data.js"></script>
 <script>
@@ -100,7 +122,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const club=id=>CLUBS.find(c=>c.id===id)||{id,name:id,color:'#888'};
 const TODAY=new Date();TODAY.setHours(0,0,0,0);
 let view=new Date(TODAY.getFullYear(),TODAY.getMonth(),1),sel=key(TODAY);
-let S={off:[],going:[]};
+let S={off:[],going:[],offTypes:[],offDances:[]};
 try{const r=localStorage.getItem('tromso-dance');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const save=()=>{try{localStorage.setItem('tromso-dance',JSON.stringify(S))}catch(e){}};
 
@@ -112,7 +134,7 @@ const sbFetch=(path,opt)=>fetch(SB.url+'/rest/v1/'+path,Object.assign({headers:{
 async function loadCounts(){
   if(!SB)return;
   try{const r=await sbFetch('going_counts?select=event_id,n');if(!r.ok)return;
-    COUNTS={};(await r.json()).forEach(x=>COUNTS[x.event_id]=x.n);renderCal();renderAgenda()}catch(e){}
+    COUNTS={};(await r.json()).forEach(x=>COUNTS[x.event_id]=x.n);renderCal();renderAgenda();renderUpcoming()}catch(e){}
 }
 let queue=Promise.resolve();
 function pushGoing(id,going){
@@ -128,7 +150,11 @@ if(safeUrl(D.contact||'')||/^mailto:/.test(D.contact||'')){$('contact').href=D.c
 
 const coffeeUrl=safeUrl(D.coffee||'');
 if(coffeeUrl){$('coffee').href=coffeeUrl;$('coffee').hidden=false;$('coffeeNote').hidden=false}
-const mk=(o,k)=>({id:o.club+'|'+o.title+'|'+k,club:o.club,t:o.title,d:k,s:o.start,e:o.end,v:o.venue,x:o.desc,u:o.url});
+const mk=(o,k)=>{
+  const first=o.date||k,last=o.endDate||first,multi=last>first;
+  const s=!multi||k===first?o.start:'00:00',e=!multi||k===last?o.end:'24:00';
+  return{id:o.club+'|'+o.title+'|'+first,club:o.club,t:o.title,d:k,s:multi&&k===first&&!o.start?'00:00':s,e:multi&&k===last&&!o.end?'24:00':e,v:o.venue,x:o.desc,u:o.url,nt:!o.start,type:o.type||'Social',dances:o.dances||[],first,last,multi};
+};
 function eventsOn(k){
   const d=new Date(k+'T00:00'),out=[];
   (D.weekly||[]).forEach(w=>{
@@ -136,13 +162,30 @@ function eventsOn(k){
     if(w.every>1){const days=Math.round((d-new Date((w.from||'2000-01-03')+'T00:00'))/864e5);if(Math.floor(days/7)%w.every)return}
     out.push(mk(w,k));
   });
-  (D.events||[]).forEach(e=>{if(e.date===k)out.push(mk(e,k))});
+  (D.events||[]).forEach(e=>{if(k>=e.date&&k<=(e.endDate||e.date))out.push(mk(e,k))});
   return out;
 }
-const byDay=k=>eventsOn(k).filter(e=>!S.off.includes(e.club)).sort((a,b)=>mins(a.s)-mins(b.s));
+const TYPES=(D.types||['Social','Event']).concat([...new Set([...(D.weekly||[]),...(D.events||[])].map(o=>o.type||'Social'))]).filter((t,i,a)=>a.indexOf(t)===i);
+const DANCES=(D.dances||['Bachata','Salsa','Zouk','Kizomba','WCS']).concat([...new Set([...(D.weekly||[]),...(D.events||[])].flatMap(o=>o.dances||[]))]).filter((t,i,a)=>a.indexOf(t)===i);
+const danceOk=e=>!e.dances.length||e.dances.some(x=>!S.offDances.includes(x));
+const byDay=k=>eventsOn(k).filter(e=>!S.off.includes(e.club)&&!S.offTypes.includes(e.type)&&danceOk(e)).sort((a,b)=>mins(a.s)-mins(b.s));
 function clashes(e){
   const[s1,e1]=span(e);
   return byDay(e.d).filter(o=>o.id!==e.id&&S.going.includes(o.id)&&(()=>{const[s2,e2]=span(o);return s1<e2&&s2<e1})());
+}
+function renderTypes(){
+  const box=$('types');box.innerHTML='';
+  const groups=[['Type',TYPES,'offTypes'],['Dance',DANCES,'offDances']];
+  groups.forEach(([label,list,k])=>{
+    if(list.length<2)return;
+    const h=document.createElement('div');h.className='muted';h.textContent=label;box.appendChild(h);
+    list.forEach(t=>{
+      const b=document.createElement('button');b.className='tag';
+      b.setAttribute('aria-pressed',!S[k].includes(t));b.textContent=t;
+      b.onclick=()=>{S[k]=S[k].includes(t)?S[k].filter(x=>x!==t):S[k].concat(t);save();render()};
+      box.appendChild(b);
+    });
+  });
 }
 function renderClubs(){
   const box=$('clubs');box.innerHTML='';
@@ -154,7 +197,7 @@ function renderClubs(){
     b.onclick=()=>{S.off=S.off.includes(c.id)?S.off.filter(x=>x!==c.id):S.off.concat(c.id);save();render()};
     row.appendChild(b);
     const u=safeUrl(c.url||'');
-    if(u){const a=document.createElement('a');a.className='site';a.href=u;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Site';a.setAttribute('aria-label',c.name+' website');row.appendChild(a)}
+    if(u){const a=document.createElement('a');a.className='site';a.href=u;a.target='_blank';a.rel='noopener noreferrer';a.textContent='↗';a.title='Website';a.setAttribute('aria-label',c.name+' website');row.appendChild(a)}
     box.appendChild(row);
   });
 }
@@ -170,7 +213,7 @@ function renderCal(){
     b.setAttribute('aria-label',d.toDateString()+', '+evs.length+' socials');
     let h='<span class="n">'+d.getDate()+'</span>';
     evs.slice(0,3).forEach(e=>{const gg=S.going.includes(e.id),cl=!gg&&clashes(e).length;
-      h+='<span class="chip'+(gg?' going':'')+(cl?' clash':'')+'" style="--c:'+club(e.club).color+'">'+esc(e.s+' '+e.t)+'</span>'});
+      h+='<span class="chip'+(gg?' going':'')+(cl?' clash':'')+'" style="--c:'+club(e.club).color+'">'+esc((e.nt?'':e.s+' ')+e.t)+'</span>'});
     if(evs.length>3)h+='<span class="more">+'+(evs.length-3)+' more</span>';
     b.innerHTML=h;b.onclick=()=>{sel=k;render()};g.appendChild(b);
   }
@@ -178,7 +221,7 @@ function renderCal(){
 function renderAgenda(){
   $('dayTitle').textContent=new Date(sel+'T00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
   const A=$('agenda'),evs=byDay(sel);A.innerHTML='';
-  if(!evs.length){A.innerHTML='<p class="empty">No socials this day. Pick another day, or turn on more clubs.</p>';return}
+  if(!evs.length){A.innerHTML='<p class="empty">No socials this day. Pick another day, or turn on more organizers.</p>';return}
   evs.forEach(e=>{
     const c=club(e.club),g=S.going.includes(e.id),cl=clashes(e);
     const el=document.createElement('div');el.className='ev';el.style.setProperty('--c',c.color);
@@ -186,7 +229,9 @@ function renderAgenda(){
     const info=el.querySelector('.info');
     el.querySelector('b').textContent=e.t+' · '+c.name;
     const n=COUNTS[e.id]||0;
-    el.querySelector('.meta').textContent=e.s+'–'+e.e+(e.v?' · '+e.v:'')+(SB?' · '+n+' going':'');
+    el.querySelector('.meta').textContent=(e.multi?fmtRange(e)+' · day '+(Math.round((new Date(e.d)-new Date(e.first))/864e5)+1)+' of '+(Math.round((new Date(e.last)-new Date(e.first))/864e5)+1):e.nt?'':e.s+'–'+e.e)+(e.v&&(e.multi||!e.nt)?' · ':'')+(e.v||'')+(SB?' · '+n+' going':'');
+    if(e.type!=='Social'){const bd=document.createElement('span');bd.className='badge';bd.textContent=e.type;el.querySelector('b').after(bd)}
+    e.dances.slice().reverse().forEach(x=>{const bd=document.createElement('span');bd.className='badge dance';bd.textContent=x;el.querySelector('b').after(bd)});
     const ds=e.x||c.desc||'',us=safeUrl(e.u||c.url||'');
     if(ds){const p=document.createElement('p');p.className='desc';p.textContent=ds;info.appendChild(p)}
     if(us){const a=document.createElement('a');a.href=us;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Event page';info.appendChild(a)}
@@ -196,7 +241,36 @@ function renderAgenda(){
     el.appendChild(bt);A.appendChild(el);
   });
 }
-function render(){renderClubs();renderCal();renderAgenda()}
+const fmtDay=k=>new Date(k+'T00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+const fmtRange=e=>fmtDay(e.first)+' – '+fmtDay(e.last);
+function renderUpcoming(){
+  const box=$('upcoming');box.innerHTML='';
+  let any=false;
+  for(let i=0;i<180;i++){
+    const d=new Date(TODAY);d.setDate(d.getDate()+i);const k=key(d);
+    byDay(k).forEach(e=>{
+      if(e.multi&&i>0&&k!==e.first)return;
+      any=true;
+      const c=club(e.club),g=S.going.includes(e.id);
+      const b=document.createElement('button');b.className='up';b.style.setProperty('--c',c.color);
+      const w=document.createElement('div');w.className='when';
+      w.textContent=e.multi?fmtRange(e):fmtDay(k)+(e.nt?'':' · '+e.s+'–'+e.e);
+      const t=document.createElement('div');t.className='what';
+      const n=document.createElement('b');n.textContent=e.t;
+      const m=document.createElement('span');m.className='meta';
+      m.textContent=' · '+c.name+(e.v?' · '+e.v:'')+(SB?' · '+(COUNTS[e.id]||0)+' going':'');
+      t.append(n);
+      if(e.type!=='Social'){const bd=document.createElement('span');bd.className='badge';bd.textContent=e.type;t.append(bd)}
+      e.dances.forEach(x=>{const bd=document.createElement('span');bd.className='badge dance';bd.textContent=x;t.append(bd)});
+      t.append(m);b.append(w,t);
+      if(g){const x=document.createElement('span');x.className='going-tag';x.textContent='Going ✓';b.appendChild(x)}
+      b.onclick=()=>{sel=k;view=new Date(d.getFullYear(),d.getMonth(),1);render();$('title').scrollIntoView({behavior:'smooth',block:'start'})};
+      box.appendChild(b);
+    });
+  }
+  if(!any)box.innerHTML='<p class="empty">No upcoming socials. Turn on more organizers.</p>';
+}
+function render(){renderClubs();renderTypes();renderCal();renderAgenda();renderUpcoming()}
 
 $('dows').innerHTML=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(x=>'<div class="dow">'+x+'</div>').join('');
 $('prev').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);renderCal()};
