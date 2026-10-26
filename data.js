@@ -42,6 +42,6 @@ window.CALENDAR = {
     { club: 'mambo-bachata', title: 'Tromsø Salsa & Bachata Weekend', type: 'Event', dances: ['Salsa', 'Bachata', 'Kizomba'], date: '2026-11-27', endDate: '2026-11-29', start: '20:00', end: '17:00', venue: 'Habibi Oriental Dance Club, Søndre Tollbodgate 7', desc: 'Fri 20:00 Bachata class + welcome social. Sat 12:00-17:00 workshops, 20:30-01:30 Latin social. Sun 12:00-17:00 workshops. Taught by César Acevedo. Full weekend pass 990 NOK early bird / 1,190 NOK.', url: 'https://fb.me/e/kH20KNtAt' },
     { club: 'tromso-salsaklubb', title: 'Zouk social', dances: ['Zouk'], date: '2026-10-29', start: '20:00', end: '21:00', venue: 'Tromsø Salsaklubb, Grønnegata 32' },
     { club: 'arctic-westies', title: 'WCS social dancing with Arctic Westies', dances: ['WCS'], date: '2026-10-23', start: '20:30', end: '23:00', venue: 'Habibi Dance Studio', url: 'https://fb.me/e/arCyaIJQJ' },
-    { club: 'tromso-salsaklubb', title: 'Halloween Party', date: '2026-10-31', start: '21:00', end: '24:00', venue: 'Tromsø Salsaklubb, Grønnegata 32', url: 'https://www.facebook.com/events/1432396615745702',  dances: ['Salsa', 'Bachata', 'Kizomba'] }
+    { club: 'tromso-salsaklubb', title: 'Halloween Party', dances: ['Salsa', 'Bachata', 'Kizomba', 'Zouk'], date: '2026-10-31', start: '21:00', end: '24:00', venue: 'Tromsø Salsaklubb, Grønnegata 32', url: 'https://www.facebook.com/events/1432396615745702',  dances: ['Salsa', 'Bachata', 'Kizomba'] }
   ]
 };
