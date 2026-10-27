@@ -12,25 +12,29 @@ window.CALENDAR = {
   // The anon key is public by design; leave both empty to hide counts.
   supabase: { url: 'https://omchirosvaavxmdmxear.supabase.co', anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tY2hpcm9zdmFhdnhtZG14ZWFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3NjQ0NTMsImV4cCI6MjEwODM0MDQ1M30.r5jfDYLjt4TyEemL7SnqUFJlQsS-k8eA-3uAd1N6nC0' },
 
+  dances: ['Bachata', 'Salsa', 'Zouk', 'Kizomba', 'WCS', 'Swing'],
+
   // One entry per organizer (the `clubs` list). "id" is a short code you reuse as `club:` below.
   clubs: [
     { id: 'arctic-westies', name: 'Arctic Westies', color: '#87cefa', url: 'https://arcticwesties.no/' },
     { id: 'tromso-salsaklubb', name: 'Tromsø Salsaklubb', color: '#e4572e', url: 'https://tromsosalsaklubb.com/timeplan-var-2025/' },
     { id: 'winterworld-westies', name: 'WinterWorld Westies', color: '#7b5ea7', url: 'https://winterworldwesties.com/schedule/' },
     { id: 'mambo-bachata', name: 'Mambo Bachata Trondheim', color: '#1f9d6b', url: 'https://www.mambobachatatrondheim.no/' },
-    { id: 'tango-polar', name: 'Tango Polar', color: '#c2185b' }
+    { id: 'tango-polar', name: 'Tango Polar', color: '#c2185b' },
+    { id: 'kom-og-dans', name: 'Kom og Dans', color: '#d49b20', url: 'https://www.komogdans.no/troms-finnmark/avdelinger/tromso/' }
   ],
 
   // Repeating socials. weekday: 0=Sunday, 1=Monday ... 6=Saturday.
   // every: 1 = weekly, 2 = every second week (counted from "from", which should fall on that weekday).
   // from / until are optional (YYYY-MM-DD). Recurring socials are set to end 2026-12-31 (one semester); extend `until` when the next semester is confirmed.
   weekly: [
-    { club: 'tango-polar', title: 'Tango', dances: ['Tango'], weekday: 1, start: '20:00', end: '22:00', venue: 'Habibi dansestudio, Søndre Tollbodgate 7, 9008 Tromsø', until: '2026-12-14', url: 'https://fb.me/e/aIA06vuqz' },    { club: 'arctic-westies', title: 'Monday social', dances: ['WCS'], weekday: 1, start: '21:00', end: '23:00', venue: 'LHL', until: '2026-12-31' },
+    { club: 'kom-og-dans', title: 'Swing Thursday Social', dances: ['Swing'], weekday: 4, start: '20:00', end: '22:00', venue: 'LHL, Storgata 132', from: '2026-10-29', until: '2026-12-23' },
+    { club: 'tango-polar', title: 'Tango', type: 'Social', dances: ['Tango'], weekday: 1, start: '20:00', end: '22:00', venue: 'Habibi dansestudio, Søndre Tollbodgate 7, 9008 Tromsø', until: '2026-12-14', url: 'https://fb.me/e/aIA06vuqz' },    { club: 'arctic-westies', title: 'Monday social', dances: ['WCS'], weekday: 1, start: '21:00', end: '23:00', venue: 'LHL', until: '2026-12-31' },
     { club: 'winterworld-westies', title: 'Wednesday social', dances: ['WCS'], weekday: 3, start: '19:00', end: '20:15', venue: 'Hagen Tromsø, Storgata 132', until: '2026-12-31', url: 'https://winterworldwesties.com/schedule/' }
   ],
 
   // dances: optional list of tags, e.g. dances: ['Salsa', 'Bachata']. Works on weekly and one-off entries.
-  // Allowed: Bachata, Salsa, Zouk, Kizomba, WCS (change with `dances: [...]` at the top of this object).
+  // Allowed: Bachata, Salsa, Zouk, Kizomba, WCS, Swing (change with `dances: [...]` at the top of this object).
   // One-off events. date: YYYY-MM-DD. All fields except club (organizer id), title, date, start, end are optional.
   // type: optional, one of 'Social' (default), 'Event'. Each gets a filter in the sidebar.
   // To change the list, set `types: [...]` at the top of this object.
@@ -43,6 +47,6 @@ window.CALENDAR = {
     { club: 'mambo-bachata', title: 'Tromsø Salsa & Bachata Weekend', type: 'Event', dances: ['Salsa', 'Bachata', 'Kizomba'], date: '2026-11-27', endDate: '2026-11-29', start: '20:00', end: '17:00', venue: 'Habibi Oriental Dance Club, Søndre Tollbodgate 7', desc: 'Fri 20:00 Bachata class + welcome social. Sat 12:00-17:00 workshops, 20:30-01:30 Latin social. Sun 12:00-17:00 workshops. Taught by César Acevedo. Full weekend pass 990 NOK early bird / 1,190 NOK.', url: 'https://fb.me/e/kH20KNtAt' },
     { club: 'tromso-salsaklubb', title: 'Zouk social', dances: ['Zouk'], date: '2026-10-29', start: '20:00', end: '21:00', venue: 'Tromsø Salsaklubb, Grønnegata 32' },
     { club: 'arctic-westies', title: 'WCS social dancing with Arctic Westies', dances: ['WCS'], date: '2026-10-23', start: '20:30', end: '23:00', venue: 'Habibi Dance Studio', url: 'https://fb.me/e/arCyaIJQJ' },
-    { club: 'tromso-salsaklubb', title: 'Halloween Party', dances: ['Salsa', 'Bachata', 'Kizomba', 'Zouk'], date: '2026-10-31', start: '21:00', end: '24:00', venue: 'Tromsø Salsaklubb, Grønnegata 32', url: 'https://www.facebook.com/events/1432396615745702',  dances: ['Salsa', 'Bachata', 'Kizomba'] }
+    { club: 'tromso-salsaklubb', title: 'Halloween Party', type: 'Social', dances: ['Salsa', 'Bachata', 'Kizomba', 'Zouk'], date: '2026-10-31', start: '21:00', end: '24:00', venue: 'Tromsø Salsaklubb, Grønnegata 32', url: 'https://www.facebook.com/events/1432396615745702',  dances: ['Salsa', 'Bachata', 'Kizomba'] }
   ]
 };
