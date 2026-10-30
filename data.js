@@ -12,7 +12,7 @@ window.CALENDAR = {
   // The anon key is public by design; leave both empty to hide counts.
   supabase: { url: 'https://omchirosvaavxmdmxear.supabase.co', anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tY2hpcm9zdmFhdnhtZG14ZWFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3NjQ0NTMsImV4cCI6MjEwODM0MDQ1M30.r5jfDYLjt4TyEemL7SnqUFJlQsS-k8eA-3uAd1N6nC0' },
 
-  dances: ['Bachata', 'Salsa', 'Zouk', 'Kizomba', 'WCS', 'Swing'],
+  dances: ['Bachata', 'Salsa', 'Zouk', 'Kizomba', 'WCS', 'Swing', 'Cha-Cha-Cha'],
 
   // One entry per organizer (the `clubs` list). "id" is a short code you reuse as `club:` below.
   clubs: [
@@ -34,12 +34,13 @@ window.CALENDAR = {
   ],
 
   // dances: optional list of tags, e.g. dances: ['Salsa', 'Bachata']. Works on weekly and one-off entries.
-  // Allowed: Bachata, Salsa, Zouk, Kizomba, WCS, Swing (change with `dances: [...]` at the top of this object).
+  // Allowed: Bachata, Salsa, Zouk, Kizomba, WCS, Swing, Cha-Cha-Cha (change with `dances: [...]` at the top of this object).
   // One-off events. date: YYYY-MM-DD. All fields except club (organizer id), title, date, start, end are optional.
   // type: optional, one of 'Social' (default), 'Event'. Each gets a filter in the sidebar.
   // To change the list, set `types: [...]` at the top of this object.
   // endDate: optional YYYY-MM-DD for multi-day events. start is on date, end is on endDate.
   events: [
+    { club: 'tromso-salsaklubb', title: 'Cha-Cha-Cha weekend course', type: 'Event', dances: ['Cha-Cha-Cha'], date: '2026-11-14', endDate: '2026-11-15', venue: 'Tromsø Salsaklubb, Grønnegata 32', desc: 'Velkommen til en morsom dansehelg med Mathilde Hofvind, der vi skal utforske den fantastiske verdenen av cha-cha-cha! Hun introduserer rytmen, gode verktøy for pardans, kreativt fotarbeid og enkle mønstre og figurer du kan bruke på fest. Kurset er en del av Mathildes praksis i Trener 1-programmet i regi av Norges Danseforbund. Del gjerne tilbakemeldingene dine med henne etter kurset. Lørdag: 12:00 Rhythm and steps (solo), 12:45 pause, 12:55 partnerwork, 13:40 lunsj, 14:10 right turn, 14:55 pause, 15:00 open twists, 21:00 Christmas party. Søndag: 12:00 warmup, 12:15 crossbody-lead, 13:00 pause, 13:10 left turn, 13:55 lunsj, 14:25 creative footwork, 15:15 total recap. Welcome to a fun weekend exploring cha-cha-cha with Mathilde Hofvind. She will introduce rhythm, partnerwork tools, creative footwork, and easy patterns and moves for parties.', url: 'https://pameldinger.no/e/87z7j4' },
     { club: 'tromso-salsaklubb', title: 'Latin social', dances: ['Salsa', 'Kizomba', 'Zouk', 'WCS', 'Bachata'], desc: 'Social dancing to SBK music, with occasional Zouk and WCS.', url: '', venue: 'Tromsø Salsaklubb, Grønnegata 32', date: '2026-11-06', start: '21:00', end: '23:00' },
     { club: 'tromso-salsaklubb', title: 'Latin social', dances: ['Salsa', 'Kizomba', 'Zouk', 'WCS', 'Bachata'], desc: 'Social dancing to SBK music, with occasional Zouk and WCS.', url: '', venue: 'Tromsø Salsaklubb, Grønnegata 32', date: '2026-12-05', start: '21:00', end: '23:00' },
     { club: 'tromso-salsaklubb', title: 'Salsa level 2 & 3 weekend', type: 'Event', dances: ['Salsa'], date: '2026-10-31', endDate: '2026-11-01', desc: 'Technique - Flow to Wow! For level 2 & 3 dancers: frame, timing, connection, flow and musicality. Better lead, better follow.', url: 'https://fb.me/e/57AelCOd6' },
