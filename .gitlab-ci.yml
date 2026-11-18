@@ -1,0 +1,11 @@
+# Publishes index.html and data.js with GitLab Pages whenever you push to the default branch.
+pages:
+  stage: deploy
+  script:
+    - mkdir -p public
+    - cp index.html data.js public/
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
